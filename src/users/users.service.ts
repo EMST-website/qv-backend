@@ -84,6 +84,7 @@ export class UsersService {
         isActive: true,
         activationToken: null, // Clear token
         password: password, // In real app, HASH THIS PASSWORD!
+        newsletterSubscribed: profileData.newsletterSubscribed ?? true,
         ...profileData,
       })
       .where(eq(users.id, user.id))

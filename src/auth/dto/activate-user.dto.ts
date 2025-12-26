@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator';
 
 export class ActivateUserDto {
   @ApiProperty({
@@ -55,6 +55,17 @@ export class ActivateUserDto {
     example: 'New York',
     required: false,
   })
+  @IsOptional()
   @IsString()
   city?: string;
+
+  @ApiProperty({
+    description: 'Newsletter subscription preference',
+    example: true,
+    required: false,
+    default: true,
+  })
+  @IsOptional()
+  @IsBoolean()
+  newsletterSubscribed?: boolean;
 }

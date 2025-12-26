@@ -23,6 +23,7 @@ export const users = pgTable('users', {
   organizationId: uuid('organization_id').references(() => organizations.id),
   role: userRoleEnum('role').default('USER'),
   isActive: boolean('is_active').default(false),
+  newsletterSubscribed: boolean('newsletter_subscribed').default(true),
   activationToken: text('activation_token'),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),

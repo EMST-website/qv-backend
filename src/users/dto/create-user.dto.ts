@@ -6,6 +6,7 @@ import {
   IsUUID,
   IsEnum,
   IsNotEmpty,
+  IsBoolean,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -51,4 +52,14 @@ export class CreateUserDto {
   @IsOptional()
   @IsEnum(['USER', 'ADMIN'])
   role?: 'USER' | 'ADMIN';
+
+  @ApiProperty({
+    example: true,
+    description: 'Newsletter subscription preference',
+    required: false,
+    default: true,
+  })
+  @IsOptional()
+  @IsBoolean()
+  newsletterSubscribed?: boolean;
 }
