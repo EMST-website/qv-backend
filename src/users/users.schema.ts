@@ -1,5 +1,5 @@
 import { pgTable, uuid, text, boolean, timestamp, pgEnum } from 'drizzle-orm/pg-core';
-import { organizations } from '../organizations/organizations.schema';
+import { organizations } from '@/organizations/organizations.schema';
 
 export const userRoleEnum = pgEnum('user_role', ['ADMIN', 'USER']);
 
