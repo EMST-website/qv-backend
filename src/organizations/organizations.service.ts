@@ -8,7 +8,8 @@ import { organizations } from './organizations.schema';
 @Injectable()
 export class OrganizationsService {
   constructor(
-    @Inject(DATABASE_CONNECTION) private readonly db: NodePgDatabase<typeof schema>,
+    @Inject(DATABASE_CONNECTION)
+    private readonly db: NodePgDatabase<typeof schema>,
   ) {}
 
   async findAll() {
@@ -23,12 +24,16 @@ export class OrganizationsService {
   }
 
   async create(createOrganizationDto: any) {
-    const result = await this.db.insert(organizations).values(createOrganizationDto).returning();
+    const result = await this.db
+      .insert(organizations)
+      .values(createOrganizationDto)
+      .returning();
     return result[0];
   }
 
   async update(id: string, updateOrganizationDto: any) {
-    const result = await this.db.update(organizations)
+    const result = await this.db
+      .update(organizations)
       .set(updateOrganizationDto)
       .where(eq(organizations.id, id))
       .returning();

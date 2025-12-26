@@ -4,6 +4,6 @@ import { WebinarsController } from './webinars.controller';
 
 @Module({
   providers: [WebinarsService],
-  controllers: [WebinarsController]
+  controllers: [WebinarsController],
 })
 export class WebinarsModule {}

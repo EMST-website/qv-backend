@@ -10,7 +10,8 @@ import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class UsersService {
   constructor(
-    @Inject(DATABASE_CONNECTION) private readonly db: NodePgDatabase<typeof schema>,
+    @Inject(DATABASE_CONNECTION)
+    private readonly db: NodePgDatabase<typeof schema>,
     private readonly emailService: EmailService,
   ) {}
 
@@ -18,7 +19,7 @@ export class UsersService {
     return this.db.query.users.findMany({
       with: {
         organization: true,
-      }
+      },
     });
   }
 
@@ -27,7 +28,7 @@ export class UsersService {
       where: eq(users.id, id),
       with: {
         organization: true,
-      }
+      },
     });
     return result;
   }
@@ -54,7 +55,8 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: any) {
-    const result = await this.db.update(users)
+    const result = await this.db
+      .update(users)
       .set(updateUserDto)
       .where(eq(users.id, id))
       .returning();
@@ -65,7 +67,7 @@ export class UsersService {
     await this.db.delete(users).where(eq(users.id, id));
     return { success: true };
   }
-  
+
   // Used by AuthController to activate user
   async activateUser(token: string, password: string, profileData: any) {
     const user = await this.db.query.users.findFirst({
@@ -76,7 +78,8 @@ export class UsersService {
       throw new Error('Invalid activation token');
     }
 
-    const updatedUser = await this.db.update(users)
+    const updatedUser = await this.db
+      .update(users)
       .set({
         isActive: true,
         activationToken: null, // Clear token
@@ -85,7 +88,7 @@ export class UsersService {
       })
       .where(eq(users.id, user.id))
       .returning();
-      
+
     return updatedUser[0];
   }
 }

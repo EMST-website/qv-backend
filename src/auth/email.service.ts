@@ -16,7 +16,7 @@ export class EmailService {
 
   async sendActivationEmail(email: string, token: string) {
     const activationLink = `qv-mobile://activate?token=${token}`;
-    
+
     // In a real app, you would render an HTML template here.
     const info = await this.transporter.sendMail({
       from: '"QV App" <noreply@qv.app>',
@@ -33,9 +33,11 @@ export class EmailService {
       `,
     });
 
-    console.log(`[EmailService] Activation email sent to ${email}. Token: ${token}`);
+    console.log(
+      `[EmailService] Activation email sent to ${email}. Token: ${token}`,
+    );
     console.log(`[EmailService] Link: ${activationLink}`);
-    
+
     return info;
   }
 }

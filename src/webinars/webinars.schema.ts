@@ -17,7 +17,11 @@ export const webinars = pgTable('webinars', {
 
 export const webinarRegistrations = pgTable('webinar_registrations', {
   id: uuid('id').defaultRandom().primaryKey(),
-  webinarId: uuid('webinar_id').references(() => webinars.id).notNull(),
-  userId: uuid('user_id').references(() => users.id).notNull(),
+  webinarId: uuid('webinar_id')
+    .references(() => webinars.id)
+    .notNull(),
+  userId: uuid('user_id')
+    .references(() => users.id)
+    .notNull(),
   registeredAt: timestamp('registered_at').defaultNow(),
 });

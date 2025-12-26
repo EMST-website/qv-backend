@@ -1,4 +1,11 @@
-import { pgTable, uuid, text, boolean, timestamp, pgEnum } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  uuid,
+  text,
+  boolean,
+  timestamp,
+  pgEnum,
+} from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { organizations } from '@/organizations/organizations.schema';
 
