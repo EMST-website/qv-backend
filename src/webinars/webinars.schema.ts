@@ -19,6 +19,7 @@ export const webinars = pgTable('webinars', {
   link: text('link'),
   capacity: integer('capacity'),
   bannerUrl: text('banner_url'),
+  duration: integer('duration'),
   countryAvailability: text('country_availability').array(), // Stored as array of strings
   isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at').defaultNow(),
