@@ -9,4 +9,14 @@ export class AuthService {
     const { password, ...profileData } = body;
     return this.usersService.activateUser(token, password, profileData);
   }
+
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.usersService.findByEmail(email);
+    if (user && user.password === pass) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
+  }
 }

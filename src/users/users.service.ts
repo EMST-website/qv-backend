@@ -33,6 +33,15 @@ export class UsersService {
     return result;
   }
 
+  async findByEmail(email: string) {
+    return this.db.query.users.findFirst({
+      where: eq(users.email, email),
+      with: {
+        organization: true,
+      },
+    });
+  }
+
   async create(createUserDto: any) {
     // Generate activation token
     const activationToken = uuidv4();
