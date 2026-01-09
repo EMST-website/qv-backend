@@ -4,7 +4,7 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '@/database/schema';
 import { eq } from 'drizzle-orm';
 import { users } from './users.schema';
-import { EmailService } from '@/auth/email.service';
+import { EmailService } from '@/modules/auth/email.service';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()

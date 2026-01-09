@@ -2,11 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { XTotalCountInterceptor } from './common/interceptors/x-total-count.interceptor';
-
-import { ValidationPipe } from '@nestjs/common';
+import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new ConsoleLogger({
+      json: true,
+    }),
+  });
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
   app.useGlobalInterceptors(new XTotalCountInterceptor());
   app.enableCors({
@@ -25,4 +28,5 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT || 3000);
 }
+
 bootstrap();

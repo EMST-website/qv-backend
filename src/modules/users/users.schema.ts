@@ -7,7 +7,7 @@ import {
   pgEnum,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { organizations } from '@/organizations/organizations.schema';
+import { organizations } from '@/modules/organizations/organizations.schema';
 
 export const userRoleEnum = pgEnum('user_role', ['ADMIN', 'USER']);
 

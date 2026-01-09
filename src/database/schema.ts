@@ -1,3 +1,3 @@
-export * from '@/users/users.schema';
-export * from '@/organizations/organizations.schema';
-export * from '@/webinars/webinars.schema';
+export * from '@/modules/users/users.schema';
+export * from '@/modules/organizations/organizations.schema';
+export * from '@/modules/webinars/webinars.schema';

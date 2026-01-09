@@ -6,7 +6,7 @@ import {
   integer,
   boolean,
 } from 'drizzle-orm/pg-core';
-import { users } from '@/users/users.schema';
+import { users } from '@/modules/users/users.schema';
 import { relations } from 'drizzle-orm';
 
 export const webinars = pgTable('webinars', {

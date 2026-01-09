@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
-import { UsersModule } from './users/users.module';
-import { WebinarsModule } from './webinars/webinars.module';
-import { OrganizationsModule } from './organizations/organizations.module';
-import { NotificationsModule } from './notifications/notifications.module';
-import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { WebinarsModule } from './modules/webinars/webinars.module';
+import { OrganizationsModule } from './modules/organizations/organizations.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
