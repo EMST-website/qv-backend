@@ -6,6 +6,7 @@ import { WebinarsModule } from './modules/webinars/webinars.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { AdminsModule } from './modules/admins/admins.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthModule } from './modules/auth/auth.module';
     OrganizationsModule,
     NotificationsModule,
     AuthModule,
+    AdminsModule
   ],
   controllers: [],
   providers: [],
