@@ -2,21 +2,15 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Patch,
-  Param,
   Delete,
-  Query,
 } from '@nestjs/common';
 import { WebinarsService } from './webinars.service';
-import { CreateWebinarDto } from './dto/create-webinar.dto';
-import { UpdateWebinarDto } from './dto/update-webinar.dto';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiParam,
-  ApiBody,
   ApiQuery,
 } from '@nestjs/swagger';
 
@@ -27,10 +21,9 @@ export class WebinarsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a webinar' })
-  @ApiBody({ type: CreateWebinarDto })
   @ApiResponse({ status: 201, description: 'Webinar created successfully' })
-  create(@Body() createWebinarDto: CreateWebinarDto) {
-    return this.webinarsService.create(createWebinarDto);
+  create() {
+    return this.webinarsService.create();
   }
 
   @Get()
@@ -41,8 +34,8 @@ export class WebinarsController {
     description: 'Filter by country code (e.g. AE)',
   })
   @ApiResponse({ status: 200, description: 'Return all webinars' })
-  findAll(@Query('country') country?: string) {
-    return this.webinarsService.findAll(country);
+  findAll() {
+    return this.webinarsService.findAll();
   }
 
   @Get(':id')
@@ -50,34 +43,30 @@ export class WebinarsController {
   @ApiParam({ name: 'id', description: 'Webinar UUID' })
   @ApiResponse({ status: 200, description: 'Return the webinar' })
   @ApiResponse({ status: 404, description: 'Webinar not found' })
-  findOne(@Param('id') id: string) {
-    return this.webinarsService.findOne(id);
+  findOne() {
+    return this.webinarsService.findOne();
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a webinar' })
   @ApiParam({ name: 'id', description: 'Webinar UUID' })
-  @ApiBody({ type: UpdateWebinarDto })
   @ApiResponse({ status: 200, description: 'Webinar updated successfully' })
-  update(@Param('id') id: string, @Body() updateWebinarDto: UpdateWebinarDto) {
-    return this.webinarsService.update(id, updateWebinarDto);
+  update() {
+    return this.webinarsService.update();
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a webinar' })
   @ApiParam({ name: 'id', description: 'Webinar UUID' })
   @ApiResponse({ status: 200, description: 'Webinar deleted successfully' })
-  remove(@Param('id') id: string) {
-    return this.webinarsService.remove(id);
+  remove() {
+    return this.webinarsService.remove();
   }
 
   @Post(':id/register')
   @ApiOperation({ summary: 'Register for a webinar' })
   @ApiParam({ name: 'id', description: 'Webinar UUID' })
-  @ApiBody({
-    schema: { type: 'object', properties: { userId: { type: 'string' } } },
-  })
-  register(@Param('id') id: string, @Body('userId') userId: string) {
-    return this.webinarsService.register(id, userId);
+  register() {
+    return this.webinarsService.register();
   }
 }

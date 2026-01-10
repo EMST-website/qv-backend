@@ -2,103 +2,47 @@ import { Injectable, Inject } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '@/database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '@/database/schema';
-import { eq } from 'drizzle-orm';
-import { users } from './users.schema';
-import { EmailService } from '@/modules/auth/email.service';
-import { v4 as uuidv4 } from 'uuid';
+// import { eq } from 'drizzle-orm';
+// import { users } from './users.schema';
+// import { EmailService } from '@/modules/1auth/email.service';
+// import { v4 as uuidv4 } from 'uuid';
+import { successResponse } from '@/common/utils/response/response';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: NodePgDatabase<typeof schema>,
-    private readonly emailService: EmailService,
+    // private readonly emailService: EmailService,
   ) {}
 
-  async findAll() {
-    return this.db.query.users.findMany({
-      with: {
-        organization: true,
-      },
-    });
+  findAll() {
+    return (successResponse('Users fetched successfully', { users: [] }));
   }
 
-  async findOne(id: string) {
-    const result = await this.db.query.users.findFirst({
-      where: eq(users.id, id),
-      with: {
-        organization: true,
-      },
-    });
-    return result;
+  findOne() {
+    return (successResponse('User fetched successfully', { user: {} }));
   }
 
-  async findByEmail(email: string) {
-    return this.db.query.users.findFirst({
-      where: eq(users.email, email),
-      with: {
-        organization: true,
-      },
-    });
+  findByEmail() {
+      return (successResponse('User fetched successfully', { user: {} }));
   }
 
-  async create(createUserDto: any) {
+  create() {
     // Generate activation token
-    const activationToken = uuidv4();
-
-    // Prepare user data (isActive = false, dummy password initially since they set it later)
-    const userData = {
-      ...createUserDto,
-      isActive: false,
-      activationToken,
-      password: createUserDto.password || 'temp-password-placeholder', // In real app, make password nullable or handle simpler
-    };
-
-    const result = await this.db.insert(users).values(userData).returning();
-    const newUser = result[0];
-
-    // Send activation email
-    await this.emailService.sendActivationEmail(newUser.email, activationToken);
-
-    return newUser;
+    return (successResponse('User created successfully', { user: {} }));
   }
 
-  async update(id: string, updateUserDto: any) {
-    const result = await this.db
-      .update(users)
-      .set(updateUserDto)
-      .where(eq(users.id, id))
-      .returning();
-    return result[0];
+  update() {
+    return (successResponse('User updated successfully', { user: {} }));
   }
 
-  async remove(id: string) {
-    await this.db.delete(users).where(eq(users.id, id));
-    return { success: true };
+  remove() {
+    return (successResponse('User removed successfully'));
   }
 
   // Used by AuthController to activate user
-  async activateUser(token: string, password: string, profileData: any) {
-    const user = await this.db.query.users.findFirst({
-      where: eq(users.activationToken, token),
-    });
-
-    if (!user) {
-      throw new Error('Invalid activation token');
-    }
-
-    const updatedUser = await this.db
-      .update(users)
-      .set({
-        isActive: true,
-        activationToken: null, // Clear token
-        password: password, // In real app, HASH THIS PASSWORD!
-        newsletterSubscribed: profileData.newsletterSubscribed ?? true,
-        ...profileData,
-      })
-      .where(eq(users.id, user.id))
-      .returning();
-
-    return updatedUser[0];
+  activateUser() {
+    return (successResponse('User activated successfully', { user: {} }));
   }
 }

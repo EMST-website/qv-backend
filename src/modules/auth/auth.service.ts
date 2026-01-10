@@ -1,22 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from '@/modules/users/users.service';
+import { successResponse } from '@/common/utils/response/response';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor() {}
 
-  async activateUser(token: string, body: any) {
-    const { password, ...profileData } = body;
-    return this.usersService.activateUser(token, password, profileData);
+  activateUser() {
+    return (successResponse('User activated successfully', { user: {} }));
   }
 
-  async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.findByEmail(email);
-    if (user && user.password === pass) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
+  validateUser() {
+    return (successResponse('User validated successfully', { user: {} }));
   }
 }
