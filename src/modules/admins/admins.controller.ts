@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
 import type { Response, Request } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { AdminsService } from './admins.service';
@@ -7,6 +7,8 @@ import { successResponse } from '@/common/utils/response/response';
 import { CreateAdminsDto } from './dto/create-admin.dto';
 import { AdminAuthGuard, SuperAdminAuthGuard } from '@/common/guards/admin-auth.guard';
 import { FetchAdminsDto } from './dto/fetch-admins.dto';
+import { UpdateAdminDto, UpdateAdminMeDto } from './dto/update-admin.dto';
+import { AdminPayload } from '@/common/types/payload';
 
 
 @Controller('admins')
@@ -89,4 +91,24 @@ export class AdminsController {
       return (await this.adminsService.getAdmins(filters));
    };
 
+   @Put('me')
+   @UseGuards(AdminAuthGuard)
+   async UpdateMe(@Body() body: UpdateAdminMeDto, @Req() req: Request & { payload: AdminPayload }) {
+      const payload = req.payload;
+      console.log(payload);
+      return (await this.adminsService.updateMe(payload.id, body));
+   };
+
+   @Put(':id')
+   @UseGuards(AdminAuthGuard, SuperAdminAuthGuard)
+   async UpdateAdmin(@Param('id', ParseUUIDPipe) id: string, @Body() body: UpdateAdminDto, @Req() req: Request & { payload: AdminPayload }) {
+      const payload = req.payload;
+      return (await this.adminsService.updateAdmin(id, body, payload));
+   };
+
+   @Delete(':id')
+   @UseGuards(AdminAuthGuard, SuperAdminAuthGuard)
+   async DeleteAdmin(@Param('id', ParseUUIDPipe) id: string) {
+      return (await this.adminsService.deleteAdmin(id));
+   };
 };

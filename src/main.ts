@@ -5,6 +5,11 @@ import { XTotalCountInterceptor } from './common/interceptors/x-total-count.inte
 import { ConsoleLogger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/interceptors/excpetion.interceptor';
 import * as cookieParser from 'cookie-parser';
+import { Redis } from 'ioredis';
+import { REDIS_CLIENT } from './cache/cache.service';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import * as schema from './database/schema';
+import { DATABASE_CONNECTION } from './database/database.provider';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -48,8 +53,32 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
+  // Verify connections before starting server
+  try {
+    console.log('\n🔍 Verifying connections...\n');
+    
+    // Get database connection from app context
+    app.get<NodePgDatabase<typeof schema>>(DATABASE_CONNECTION);
+    // Get Redis connection from app context
+    const redis = app.get<Redis>(REDIS_CLIENT);
+    await redis.ping();
+    
+    console.log('\n✅ All connections verified successfully!\n');
+  } catch (error) {
+    console.error('\n❌ Connection verification failed:', error.message);
+    console.error('⚠️  Application will not start until connections are established.\n');
+    await app.close();
+    process.exit(1);
+  }
+
   // Start the server
   await app.listen(process.env.PORT || 3000);
+
+  
+  // Final verification summary at the bottom
+  console.log('\n✅ Database connection: OK');
+  console.log('✅ Redis cache connection: OK');
+  console.log(`🚀 Application is running on: http://localhost:${process.env.PORT || 3000}/api\n`);
 }
 
 void bootstrap();

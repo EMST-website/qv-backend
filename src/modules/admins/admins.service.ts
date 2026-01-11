@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { LoginAdminsDto, VerifyOTPDto } from './dto/login-admins.dto';
 import { DATABASE_CONNECTION } from '@/database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -13,6 +13,7 @@ import { JwtService } from '@/common/utils/jwt/jwt.service';
 import { AdminPayload } from '@/common/types/payload';
 import { adminRefreshTokens } from '@/database/schema';
 import { CreateAdminsDto } from './dto/create-admin.dto';
+import { UpdateAdminDto, UpdateAdminMeDto } from './dto/update-admin.dto';
 
 
 @Injectable()
@@ -212,7 +213,7 @@ export class AdminsService {
       return (successResponse('Logout successful'));
    };
 
-   public async createAdmin (body: CreateAdminsDto) {
+   public async createAdmin(body: CreateAdminsDto) {
       // check if admin already exists
       const admin = await this.db.query.admins.findFirst({
          where: or(
@@ -233,26 +234,32 @@ export class AdminsService {
       const hashed_password = await bcrypt.hash(body.password, 10);
 
       // create the admin
-      const new_admin = await this.db.insert(admins).values({
-         email: body.email,
-         password: hashed_password,
-         first_name: body.first_name,
-         last_name: body.last_name,
-         phone: body.phone,
-         country: body.country,
-         city: body.city,
-         role: body.role,
-      }).returning({
-         id: admins.id,
-         email: admins.email,
-         first_name: admins.first_name,
-         last_name: admins.last_name,
-         phone: admins.phone,
-         country: admins.country,
-         city: admins.city,
-         role: admins.role,
-         created_at: admins.created_at,
-      }).then(result => result[0]);
+      const new_admin = await this.db.transaction(async (tx) => {
+         const admin = await tx.insert(admins).values({
+            email: body.email,
+            password: hashed_password,
+            first_name: body.first_name,
+            last_name: body.last_name,
+            phone: body.phone,
+            country: body.country,
+            city: body.city,
+            role: body.role,
+         }).returning({
+            id: admins.id,
+            email: admins.email,
+            first_name: admins.first_name,
+            last_name: admins.last_name,
+            phone: admins.phone,
+            country: admins.country,
+            city: admins.city,
+            role: admins.role,
+            created_at: admins.created_at,
+         }).then(result => result[0]);
+
+         // send email to the admin
+         await this.mail.sendAdminCreatedEmail(admin.email, body.password);
+         return (admin);
+      })
 
       // return the success response
       return (successResponse('Admin created successfully', {
@@ -314,5 +321,102 @@ export class AdminsService {
 
       // Return the success response
       return (successResponse('Admins fetched successfully', result));
-   }
+   };
+
+   public async updateAdmin(id: string, body: UpdateAdminDto, payload: AdminPayload) {
+      // check if no data is provided
+      const values = Object.values(body);
+      if (values.every(value => value === undefined))
+         throw (new BadRequestException('No data provided'));
+
+      // check if admin exists
+      const admin = await this.db.query.admins.findFirst({
+         where: eq(admins.id, id)
+      });
+      if (!admin)
+         throw (new NotFoundException('Admin not found'));
+      if (admin.role === 'SUPER_ADMIN' && payload.id !== id)
+         throw (new ForbiddenException('You are not authorized to update this admin, you can only update yourself'));
+
+      // update the admin
+      const updated_admin = await this.db.update(admins).set({
+         email: body.email ? body.email : undefined,
+         first_name: body.first_name ? body.first_name : undefined,
+         last_name: body.last_name ? body.last_name : undefined,
+         phone: body.phone ? body.phone : undefined,
+         country: body.country ? body.country : undefined,
+         city: body.city ? body.city : undefined,
+         role: body.role ? body.role : undefined,
+         updated_at: new Date(),
+      }).where(eq(admins.id, id)).returning({
+         id: admins.id,
+         email: admins.email,
+         first_name: admins.first_name,
+         last_name: admins.last_name,
+         phone: admins.phone,
+         country: admins.country,
+         city: admins.city,
+         role: admins.role,
+         updated_at: admins.updated_at,
+      }).then(result => result[0]);
+
+      // return the success response
+      return (successResponse('Admin updated successfully', {
+         ...updated_admin,
+      }));
+   };
+
+   public async deleteAdmin(id: string) {
+      // check if admin exists
+      const admin = await this.db.query.admins.findFirst({
+         where: eq(admins.id, id)
+      });
+      if (!admin)
+         throw (new NotFoundException('Admin not found'));
+      if (admin.role === 'SUPER_ADMIN')
+         throw (new ForbiddenException('You are not authorized to delete this admin, you can only delete yourself'));
+
+      // delete the admin
+      await this.db.delete(admins).where(
+         eq(admins.id, id)
+      );
+
+      // return the success response
+      return (successResponse('Admin deleted successfully'));
+   };
+
+   public async updateMe(admin_id: string, body: UpdateAdminMeDto) {
+      const values = Object.values(body);
+      if (values.every(value => value === undefined))
+         throw (new BadRequestException('No data provided'));
+
+      // check if admin exists
+      const admin = await this.db.query.admins.findFirst({
+         where: eq(admins.id, admin_id)
+      });
+      if (!admin)
+         throw (new NotFoundException('Admin not found'));
+
+      // update the admin
+      const updated_admin = await this.db.update(admins).set({
+         email: body.email ? body.email : undefined,
+         first_name: body.first_name ? body.first_name : undefined,
+         last_name: body.last_name ? body.last_name : undefined,
+         phone: body.phone ? body.phone : undefined,
+         country: body.country ? body.country : undefined,
+         city: body.city ? body.city : undefined,
+      }).where(eq(admins.id, admin_id)).returning({
+         id: admins.id,
+         email: admins.email,
+         first_name: admins.first_name,
+         last_name: admins.last_name,
+         phone: admins.phone,
+         country: admins.country,
+         city: admins.city,
+      }).then(result => result[0]);
+
+      return (successResponse('Your profile updated successfully', {
+         ...updated_admin,
+      }));
+   };
 };

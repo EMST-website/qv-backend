@@ -4,7 +4,7 @@ import { admins } from './admins.schema';
 export const adminRefreshTokens = pgTable('admins_refresh_tokens', {
   id: uuid('id').defaultRandom().primaryKey(),
   admin_id: uuid('admin_id')
-    .references(() => admins.id)
+    .references(() => admins.id, { onDelete: 'cascade' })
     .notNull(),
   refresh_token: text('refresh_token').notNull(),
   expires_at: timestamp('expires_at').notNull(),

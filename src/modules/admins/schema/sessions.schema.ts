@@ -10,7 +10,7 @@ import { admins } from './admins.schema';
 export const adminSessions = pgTable('admins_sessions', {
   id: uuid('id').defaultRandom().primaryKey(),
   admin_id: uuid('admin_id')
-    .references(() => admins.id)
+    .references(() => admins.id, { onDelete: 'cascade' })
     .notNull(),
   otp: varchar('otp').notNull(),
   expires_at: timestamp('expires_at').notNull(),

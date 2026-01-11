@@ -7,11 +7,18 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AdminsModule } from './modules/admins/admins.module';
+import { CacheModule } from './cache/cache.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+
+    // Database module
     DatabaseModule,
+    // Cache module
+    CacheModule,
+
+    // Application Business Modules
     UsersModule,
     WebinarsModule,
     OrganizationsModule,
