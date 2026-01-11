@@ -21,6 +21,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
+    "db:check": "ts-node -r tsconfig-paths/register scripts/check-database.ts",
+    "seed:admin": "ts-node -r tsconfig-paths/register scripts/seed-super-admin.ts",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -99,6 +101,10 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1"
+    },
+    "modulePathIgnorePatterns": ["<rootDir>/dist/"]
   }
 }
