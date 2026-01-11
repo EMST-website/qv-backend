@@ -75,7 +75,7 @@ async function bootstrap() {
 
   
   // Final verification summary at the bottom
-  console.log('\n✅ Database connection: OK');
+  // console.log('\n✅ Database connection: OK');
   console.log('✅ Redis cache connection: OK');
   console.log(`🚀 Application is running on: http://localhost:${process.env.PORT || 3000}/api\n`);
 }
