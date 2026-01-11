@@ -20,29 +20,29 @@ export class UsersService {
     return (successResponse('Users fetched successfully', { users: [] }));
   }
 
-  findOne() {
-    return (successResponse('User fetched successfully', { user: {} }));
+  findOne(id: string) {
+    return (successResponse('User fetched successfully', { user: {}, id }));
   }
 
-  findByEmail() {
-      return (successResponse('User fetched successfully', { user: {} }));
+  findByEmail(email: string) {
+      return (successResponse('User fetched successfully', { user: {}, email }));
   }
 
-  create() {
+  create(body: any) {
     // Generate activation token
-    return (successResponse('User created successfully', { user: {} }));
+    return (successResponse('User created successfully', { user: {}, body }));
   }
 
-  update() {
-    return (successResponse('User updated successfully', { user: {} }));
+  update(id: string, body: any) {
+    return (successResponse('User updated successfully', { user: {}, id, body }));
   }
 
-  remove() {
-    return (successResponse('User removed successfully'));
+  remove(id: string) {
+    return (successResponse('User removed successfully', { id }));
   }
 
   // Used by AuthController to activate user
-  activateUser() {
-    return (successResponse('User activated successfully', { user: {} }));
+  activateUser(body: any) {
+    return (successResponse('User activated successfully', { user: {}, body }));
   }
 }
