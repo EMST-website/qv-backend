@@ -5,11 +5,11 @@ import { successResponse } from '@/common/utils/response/response';
 export class AuthService {
   constructor() {}
 
-  activateUser() {
-    return (successResponse('User activated successfully', { user: {} }));
+  activateUser(body: any) {
+    return (successResponse('User activated successfully', { user: {}, body }));
   }
 
-  validateUser() {
-    return (successResponse('User validated successfully', { user: {} }));
+  validateUser(body: any) {
+    return (successResponse('User validated successfully', { user: {}, body }));
   }
 }
