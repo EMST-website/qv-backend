@@ -43,7 +43,6 @@ async function bootstrap() {
     .setTitle('QV API')
     .setDescription('QV Mobile Application API')
     .setVersion('1.0')
-    .addServer('/api/v1', 'Version 1')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
