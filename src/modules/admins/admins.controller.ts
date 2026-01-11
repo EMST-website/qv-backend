@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
 import type { Response, Request } from 'express';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiQuery, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { AdminsService } from './admins.service';
 import { LoginAdminsDto, VerifyOTPDto } from './dto/login-admins.dto';
 import { successResponse } from '@/common/utils/response/response';
@@ -210,14 +210,144 @@ export class AdminsController {
 
    @Put('me')
    @UseGuards(AdminAuthGuard)
+   @ApiBearerAuth()
+   @ApiOperation({ 
+      summary: 'Update current admin profile',
+      description: 'Update the authenticated admin\'s own profile information. Only the admin themselves can update their profile. All fields are optional - only provided fields will be updated. Requires authentication via access_token cookie.'
+   })
+   @ApiBody({ 
+      type: UpdateAdminMeDto,
+      description: 'Admin profile update data. All fields are optional.',
+      examples: {
+         updateEmail: {
+            summary: 'Update email only',
+            value: {
+               email: 'newemail@example.com'
+            }
+         },
+         updateFullProfile: {
+            summary: 'Update full profile',
+            value: {
+               email: 'admin@example.com',
+               first_name: 'John',
+               last_name: 'Doe',
+               phone: '+971501234567',
+               country: 'UAE',
+               city: 'Dubai'
+            }
+         },
+         updatePartial: {
+            summary: 'Update partial profile',
+            value: {
+               first_name: 'Jane',
+               city: 'Abu Dhabi'
+            }
+         }
+      }
+   })
+   @ApiResponse({ 
+      status: 200, 
+      description: 'Profile updated successfully',
+      schema: {
+         example: {
+            success: true,
+            message: 'Your profile updated successfully',
+            data: {
+               id: '123e4567-e89b-12d3-a456-426614174000',
+               email: 'admin@example.com',
+               first_name: 'John',
+               last_name: 'Doe',
+               phone: '+971501234567',
+               country: 'UAE',
+               city: 'Dubai'
+            }
+         }
+      }
+   })
+   @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing access token' })
+   @ApiResponse({ status: 400, description: 'Bad Request - No data provided or validation error (email format, field length constraints)' })
+   @ApiResponse({ status: 404, description: 'Not Found - Admin not found' })
    async UpdateMe(@Body() body: UpdateAdminMeDto, @Req() req: Request & { payload: AdminPayload }) {
       const payload = req.payload;
-      console.log(payload);
       return (await this.adminsService.updateMe(payload.id, body));
    };
 
    @Put(':id')
    @UseGuards(AdminAuthGuard, SuperAdminAuthGuard)
+   @ApiBearerAuth()
+   @ApiOperation({ 
+      summary: 'Update admin by ID (Super Admin only)',
+      description: 'Update an admin account by ID. Only accessible by Super Admins. All fields are optional - only provided fields will be updated. Super Admins cannot be updated by other admins (only themselves). Requires authentication via access_token cookie.'
+   })
+   @ApiParam({ 
+      name: 'id', 
+      description: 'Admin UUID to update',
+      type: String,
+      example: '123e4567-e89b-12d3-a456-426614174000'
+   })
+   @ApiBody({ 
+      type: UpdateAdminDto,
+      description: 'Admin update data. All fields are optional. Role can only be set by Super Admins.',
+      examples: {
+         updateEmail: {
+            summary: 'Update email only',
+            value: {
+               email: 'newemail@example.com'
+            }
+         },
+         updateRole: {
+            summary: 'Update role (Super Admin only)',
+            value: {
+               role: 'ADMIN'
+            }
+         },
+         updateFullProfile: {
+            summary: 'Update full admin profile',
+            value: {
+               email: 'admin@example.com',
+               first_name: 'John',
+               last_name: 'Doe',
+               phone: '+971501234567',
+               country: 'UAE',
+               city: 'Dubai',
+               role: 'ADMIN'
+            }
+         },
+         updatePartial: {
+            summary: 'Update partial profile',
+            value: {
+               first_name: 'Jane',
+               city: 'Abu Dhabi',
+               phone: '+971509876543'
+            }
+         }
+      }
+   })
+   @ApiResponse({ 
+      status: 200, 
+      description: 'Admin updated successfully',
+      schema: {
+         example: {
+            success: true,
+            message: 'Admin updated successfully',
+            data: {
+               id: '123e4567-e89b-12d3-a456-426614174000',
+               email: 'admin@example.com',
+               first_name: 'John',
+               last_name: 'Doe',
+               phone: '+971501234567',
+               country: 'UAE',
+               city: 'Dubai',
+               role: 'ADMIN',
+               updated_at: '2024-01-15T10:30:00.000Z'
+            }
+         }
+      }
+   })
+   @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing access token' })
+   @ApiResponse({ status: 403, description: 'Forbidden - Only Super Admins can update other admins. Super Admins can only update themselves.' })
+   @ApiResponse({ status: 400, description: 'Bad Request - No data provided or validation error (email format, field length constraints, invalid role)' })
+   @ApiResponse({ status: 404, description: 'Not Found - Admin with the provided ID does not exist' })
    async UpdateAdmin(@Param('id', ParseUUIDPipe) id: string, @Body() body: UpdateAdminDto, @Req() req: Request & { payload: AdminPayload }) {
       const payload = req.payload;
       return (await this.adminsService.updateAdmin(id, body, payload));
@@ -225,6 +355,30 @@ export class AdminsController {
 
    @Delete(':id')
    @UseGuards(AdminAuthGuard, SuperAdminAuthGuard)
+   @ApiBearerAuth()
+   @ApiOperation({ 
+      summary: 'Delete admin by ID (Super Admin only)',
+      description: 'Permanently delete an admin account by ID. Only accessible by Super Admins. Super Admins cannot be deleted through this endpoint (they can only delete themselves). This action is irreversible. Requires authentication via access_token cookie.'
+   })
+   @ApiParam({ 
+      name: 'id', 
+      description: 'Admin UUID to delete',
+      type: String,
+      example: '123e4567-e89b-12d3-a456-426614174000'
+   })
+   @ApiResponse({ 
+      status: 200, 
+      description: 'Admin deleted successfully',
+      schema: {
+         example: {
+            success: true,
+            message: 'Admin deleted successfully'
+         }
+      }
+   })
+   @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing access token' })
+   @ApiResponse({ status: 403, description: 'Forbidden - Only Super Admins can delete admins. Super Admins cannot be deleted through this endpoint.' })
+   @ApiResponse({ status: 404, description: 'Not Found - Admin with the provided ID does not exist' })
    async DeleteAdmin(@Param('id', ParseUUIDPipe) id: string) {
       return (await this.adminsService.deleteAdmin(id));
    };
