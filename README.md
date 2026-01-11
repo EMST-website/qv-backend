@@ -26,7 +26,7 @@ Backend service for the QV Mobile Application, built with [NestJS](https://nestj
    The `.env` file should contain:
    ```env
    DATABASE_URL="postgresql://postgres:postgres@localhost:5432/qv_db"
-   JWT_SECRET="super-secret-secret"
+   JWT_SECRET_KEY="super-secret-secret"
    PORT=3000
    ```
 
