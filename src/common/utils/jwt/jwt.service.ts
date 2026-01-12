@@ -26,6 +26,8 @@ export class JwtService {
    };
 
    public  verify_admin_token(token: string) {
+      if (!token)
+         return (null);
       return jwt.verify(token, this.jwt_secret);
    };
 

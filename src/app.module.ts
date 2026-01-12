@@ -8,6 +8,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { AuthModule } from './modules/auth/auth.module';
 import { AdminsModule } from './modules/admins/admins.module';
 import { CacheModule } from './cache/cache.module';
+import { CountriesModule } from './modules/countries/countries.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { CacheModule } from './cache/cache.module';
     OrganizationsModule,
     NotificationsModule,
     AuthModule,
-    AdminsModule
+    AdminsModule,
+    CountriesModule
   ],
   controllers: [],
   providers: [],

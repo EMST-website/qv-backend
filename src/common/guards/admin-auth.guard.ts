@@ -50,8 +50,8 @@ export class AdminAuthGuard implements CanActivate {
 
       // check if the request has a valid access token
       const access_token = req.cookies['access_token']?.split(' ')[1];
-      if (!access_token)
-         throw new UnauthorizedException('Access denied');
+      // if (!access_token)
+      //    throw new UnauthorizedException('Access denied');
 
       try {
          // check if the access token is valid
@@ -60,12 +60,10 @@ export class AdminAuthGuard implements CanActivate {
          if (!decoded) {
             // extract the refresh token id and refresh token from the request cookies
             const refresh_token_record = await this.check_refresh_token(req);
-
             // check if the admin exists
             const admin = await this.db.query.admins.findFirst({
                where: eq(admins.id, refresh_token_record.admin_id),
             });
-
             // if the admin is not found, throw an unauthorized exception
             if (!admin)
                throw (new UnauthorizedException('Access denied'));
@@ -77,10 +75,8 @@ export class AdminAuthGuard implements CanActivate {
                first_name: admin.first_name,
                last_name: admin.last_name,
             });
-
             // set the new access token in the request cookies
             req.cookies['access_token'] = `Bearer ${new_access_token}`;
-
             (req as any).payload = {
                id: admin.id,
                role: admin.role as AdminRolesEnum,
@@ -104,11 +100,7 @@ export class AdminAuthGuard implements CanActivate {
 // super admin guard
 @Injectable()
 export class SuperAdminAuthGuard implements CanActivate {
-   constructor(
-      private readonly jwtService: JwtService,
-      @Inject(DATABASE_CONNECTION)
-      private readonly db: NodePgDatabase<typeof schema>,
-   ) { };
+   constructor() {};
 
    // check if the user is a super admin
    canActivate(
@@ -124,6 +116,31 @@ export class SuperAdminAuthGuard implements CanActivate {
       // if the user is not a super admin, throw an unauthorized exception
       if (payload.role !== AdminRoles.enumValues[0])
          throw new UnauthorizedException('Access denied');
+
+      // return true
+      return (true);
+   };
+};
+
+// admin guard
+@Injectable()
+export class AdminOrSuperAdminAuthGuard implements CanActivate {
+   constructor() {};
+
+   // check if the user is an admin or super admin
+   canActivate(
+      context: ExecutionContext,
+   ) {
+      const req: Request = context.switchToHttp().getRequest();
+
+      // check if the user is an admin or super admin
+      const payload = (req as any).payload;
+      if (!payload)
+         throw new UnauthorizedException('Access denied');
+
+      // if the user is not an admin or super admin, throw an unauthorized exception
+      if (payload.role !== AdminRoles.enumValues[0] && payload.role !== AdminRoles.enumValues[1])
+         throw (new UnauthorizedException('Access denied'));
 
       // return true
       return (true);
