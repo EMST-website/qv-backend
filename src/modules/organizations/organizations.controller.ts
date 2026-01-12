@@ -1,66 +1,61 @@
 import {
+  Body,
   Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { OrganizationsService } from './organizations.service';
 import {
   ApiTags,
 } from '@nestjs/swagger';
+import { CreateOrganizationDto } from './dto/create-organization.dto';
+import { AdminAuthGuard, AdminOrSuperAdminAuthGuard } from '@/common/guards/admin-auth.guard';
+import { FetchOrganizationsDto } from './dto/fetch-organizations.dto';
+import { UpdateOrganizationDto } from './dto/update-organization.dto';
 
 @ApiTags('organizations')
 @Controller('organizations')
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
-  // @Get()
-  // @ApiOperation({ summary: 'Get all organizations' })
-  // @ApiResponse({ status: 200, description: 'Returns all organizations' })
-  // findAll() {
-  //   // return this.organizationsService.findAll();
-  // }
+  @Post('')
+  @UseGuards(AdminAuthGuard, AdminOrSuperAdminAuthGuard)
+  async create(@Body() createOrganizationDto: CreateOrganizationDto) {
+    return (await this.organizationsService.create(createOrganizationDto));
+  };
 
-  // @Get(':id')
-  // @ApiOperation({ summary: 'Get an organization by ID' })
-  // @ApiParam({ name: 'id', description: 'Organization UUID' })
-  // @ApiResponse({ status: 200, description: 'Returns the organization' })
-  // @ApiResponse({ status: 404, description: 'Organization not found' })
-  // findOne(@Param('id') id: string) {
-  //   // return this.organizationsService.findOne(id);
-  // }
+  @Get('')
+  @UseGuards(AdminAuthGuard, AdminOrSuperAdminAuthGuard)
+  async fetchAll(@Query() query: FetchOrganizationsDto) {
+    const filters = {
+      page: query.page ? parseInt(query.page.toString(), 10) : 1,
+      limit: query.limit ? parseInt(query.limit.toString(), 10) : 10,
+      name: query.name ? query.name : undefined,
+      country_id: query.country_id ? query.country_id : undefined,
+    }
+    return (await this.organizationsService.fetchAll(filters));
+  };
 
-  // @Post()
-  // @ApiOperation({ summary: 'Create a new organization' })
-  // @ApiBody({ type: CreateOrganizationDto })
-  // @ApiResponse({
-  //   status: 201,
-  //   description: 'Organization created successfully',
-  // })
-  // @ApiResponse({ status: 400, description: 'Invalid input data' })
-  // create(@Body() body: CreateOrganizationDto) {
-  //   // return this.organizationsService.create(body);
-  // }
+  @Get('list')
+  @UseGuards(AdminAuthGuard, AdminOrSuperAdminAuthGuard)
+  async fetchList() {
+    return (await this.organizationsService.fetchList());
+  };
 
-  // @Patch(':id')
-  // @ApiOperation({ summary: 'Update an organization' })
-  // @ApiParam({ name: 'id', description: 'Organization UUID' })
-  // @ApiBody({ type: UpdateOrganizationDto })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Organization updated successfully',
-  // })
-  // @ApiResponse({ status: 404, description: 'Organization not found' })
-  // update(@Param('id') id: string, @Body() body: UpdateOrganizationDto) {
-  //   // return this.organizationsService.update(id, body);
-  // }
+  @Delete(':id')
+  @UseGuards(AdminAuthGuard, AdminOrSuperAdminAuthGuard)
+  async delete(@Param('id') id: string) {
+    return (await this.organizationsService.delete(id));
+  };
 
-  // @Delete(':id')
-  // @ApiOperation({ summary: 'Delete an organization' })
-  // @ApiParam({ name: 'id', description: 'Organization UUID' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Organization deleted successfully',
-  // })
-  // @ApiResponse({ status: 404, description: 'Organization not found' })
-  // remove(@Param('id') id: string) {
-  //   // return this.organizationsService.remove(id);
-  // }
+  @Put(':id')
+  @UseGuards(AdminAuthGuard, AdminOrSuperAdminAuthGuard)
+  async update(@Param('id') id: string, @Body() updateOrganizationDto: UpdateOrganizationDto) {
+    return (await this.organizationsService.update(id, updateOrganizationDto));
+  };
 }

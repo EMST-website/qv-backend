@@ -1,9 +1,20 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import type { OrganizationStatusEnum } from '../organizations.schema';
 
 export class CreateOrganizationDto {
-  @ApiProperty({ example: 'My Organization' })
   @IsString()
   @IsNotEmpty()
   name: string;
-}
+
+  @IsUUID()
+  @IsNotEmpty()
+  country_id: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  city_id: string;
+
+  @IsEnum(['ACTIVE', 'INACTIVE'])
+  @IsNotEmpty()
+  status: OrganizationStatusEnum;
+};
