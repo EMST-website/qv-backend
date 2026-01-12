@@ -4,8 +4,6 @@ import {
   Post,
   Delete,
   Patch,
-  Param,
-  Body,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -13,10 +11,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
-  ApiBody,
 } from '@nestjs/swagger';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -41,30 +36,28 @@ export class UsersController {
     description: 'Returns the user with organization',
   })
   @ApiResponse({ status: 404, description: 'User not found' })
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  findOne() {
+    return this.usersService.findOne();
   }
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
-  @ApiBody({ type: CreateUserDto })
   @ApiResponse({
     status: 201,
     description: 'User created successfully. Activation email sent.',
   })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
-  create(@Body() body: CreateUserDto) {
-    return this.usersService.create(body);
+  create() {
+    return this.usersService.create();
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a user' })
   @ApiParam({ name: 'id', description: 'User UUID' })
-  @ApiBody({ type: UpdateUserDto })
   @ApiResponse({ status: 200, description: 'User updated successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  update(@Param('id') id: string, @Body() body: UpdateUserDto) {
-    return this.usersService.update(id, body);
+  update() {
+    return this.usersService.update();
   }
 
   @Delete(':id')
@@ -72,7 +65,7 @@ export class UsersController {
   @ApiParam({ name: 'id', description: 'User UUID' })
   @ApiResponse({ status: 200, description: 'User deleted successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  remove() {
+    return this.usersService.remove();
   }
 }
