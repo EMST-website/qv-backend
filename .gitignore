@@ -14,11 +14,11 @@ lerna-debug.log*
 
 # OS
 .DS_Store
-
+/docs
 # Tests
 /coverage
 /.nyc_output
-
+/test
 # IDEs and editors
 /.idea
 .project
@@ -27,6 +27,7 @@ lerna-debug.log*
 *.launch
 .settings/
 *.sublime-workspace
+.github/
 
 # IDE - VSCode
 .vscode/*
