@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '@/database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -409,4 +409,43 @@ export class CountriesService {
          })),
       }));
    };
+
+   /**
+    * Find country and city by ID - used to fetch countries and cities for any service that needs it
+    * @param id - Country ID
+    * @param city_id - City ID
+    * @returns country and city objects
+    */
+   public async findById(id: string, city_id?: string) {
+      // find country by id and the function will throw an error if not found
+      const country = await this.db.query.countries.findFirst({
+         where: eq(countries.id, id),
+      });
+      if (!country)
+         throw (new NotFoundException('Country not found'));
+
+      if (city_id) {
+         // find city by id and the function will throw an error if not found
+         const city = await this.db.query.cities.findFirst({
+            where: eq(citiesSchema.id, city_id),
+         });
+         if (!city)
+            throw (new NotFoundException('City not found'));
+
+         return ({
+            country,
+            city: {
+               id: city.id,
+               name: city.name,
+               status: city.status,
+            },
+         });
+      }
+
+      // return the result
+      return ({
+         country,
+         city: null,
+      });
+   }
 };

@@ -22,7 +22,9 @@ async function bootstrap() {
   app.use(cookieParser.default(''));
 
   // Global validation pipe
-  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true, whitelist: true, forbidNonWhitelisted: true
+  }));
 
   // Global x-total-count interceptor
   app.useGlobalInterceptors(new XTotalCountInterceptor());

@@ -1,13 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
-  IsOptional,
   IsString,
-  IsUUID,
   IsEnum,
   IsNotEmpty,
-  IsBoolean,
+  IsOptional,
+  IsDateString,
+  IsUUID,
 } from 'class-validator';
+import type { UserGenderEnum } from '../schema/users.schema';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'user@example.com' })
@@ -15,51 +16,39 @@ export class CreateUserDto {
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ example: 'John', required: false })
-  @IsOptional()
+  @ApiProperty({ example: 'John' })
   @IsString()
-  firstName?: string;
+  @IsNotEmpty()
+  first_name: string;
 
-  @ApiProperty({ example: 'Doe', required: false })
-  @IsOptional()
+  @ApiProperty({ example: 'Doe' })
   @IsString()
-  lastName?: string;
+  @IsNotEmpty()
+  last_name: string;
 
-  @ApiProperty({ example: '+1234567890', required: false })
-  @IsOptional()
+  @ApiProperty({ example: '+1234567890' })
   @IsString()
-  phone?: string;
+  @IsNotEmpty()
+  phone: string;
 
-  @ApiProperty({ example: 'US', required: false })
+  @IsEnum(['MALE', 'FEMALE'], {message: 'Gender must be either MALE or FEMALE'})
   @IsOptional()
-  @IsString()
-  country?: string;
+  gender?: UserGenderEnum;
 
-  @ApiProperty({ example: 'New York', required: false })
+  @ApiProperty({ example: '2025-01-01' })
+  @IsDateString()
   @IsOptional()
-  @IsString()
-  city?: string;
+  date_of_birth?: string;
 
-  @ApiProperty({
-    example: '123e4567-e89b-12d3-a456-426614174000',
-    required: false,
-  })
-  @IsOptional()
   @IsUUID()
-  organizationId?: string;
+  @IsNotEmpty()
+  country_id: string;
 
-  @ApiProperty({ example: 'USER', enum: ['USER', 'ADMIN'], required: false })
+  @IsUUID()
   @IsOptional()
-  @IsEnum(['USER', 'ADMIN'])
-  role?: 'USER' | 'ADMIN';
+  city_id?: string;
 
-  @ApiProperty({
-    example: true,
-    description: 'Newsletter subscription preference',
-    required: false,
-    default: true,
-  })
-  @IsOptional()
-  @IsBoolean()
-  newsletterSubscribed?: boolean;
+  @IsUUID()
+  @IsNotEmpty()
+  organization_id: string;
 }

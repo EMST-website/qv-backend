@@ -1,4 +1,4 @@
-import { Injectable, Inject, BadRequestException } from '@nestjs/common';
+import { Injectable, Inject, BadRequestException, NotFoundException } from '@nestjs/common';
 import { DATABASE_CONNECTION } from '@/database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '@/database/schema';
@@ -204,5 +204,20 @@ export class OrganizationsService {
 
     // return success response
     return (successResponse('Organization updated successfully', updated_organization));
+  };
+
+  /**
+   * Find organization by ID - used to fetch organizations for any service that needs it
+   * @param id - Organization ID
+   * @returns organization object
+   */
+  public async findById(id: string) {
+    const organization = await this.db.query.organizations.findFirst({
+      where: eq(organizations.id, id)
+    });
+    if (!organization)
+      throw (new NotFoundException('Organization not found'));
+
+    return (organization);
   }
 }

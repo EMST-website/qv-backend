@@ -2,16 +2,13 @@ import { cities } from '@/modules/countries/schema/cities.schema';
 import { countries } from '@/modules/countries/schema/countries.schema';
 import { organizations } from '@/modules/organizations/organizations.schema';
 import { relations } from 'drizzle-orm';
-import { date } from 'drizzle-orm/pg-core';
 import { integer } from 'drizzle-orm/pg-core';
 import { varchar } from 'drizzle-orm/pg-core';
-import { pgEnum, pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgEnum, pgTable, uuid, text, timestamp, boolean } from 'drizzle-orm/pg-core';
 
-export const UserRoles = pgEnum('user_role', ['ADMIN', 'USER']);
 export const UserGender = pgEnum('user_gender', ['MALE', 'FEMALE']);
 export const UserStatus = pgEnum('user_status', ['ACTIVE', 'INACTIVE', 'PENDING']);
 
-export type UserRolesEnum = (typeof UserRoles.enumValues)[number];
 export type UserGenderEnum = (typeof UserGender.enumValues)[number];
 export type UserStatusEnum = (typeof UserStatus.enumValues)[number];
 
@@ -22,8 +19,9 @@ export const users = pgTable('users', {
   first_name: varchar('first_name', { length: 255 }),
   last_name: varchar('last_name', { length: 255 }),
   phone: varchar('phone', { length: 255 }),
+  image_url: text('image_url'),
   gender: UserGender('gender'),
-  date_of_birth: date('date_of_birth'),
+  date_of_birth: timestamp('date_of_birth'),
   reward_points: integer('reward_points').default(0),
 
   country_id: uuid('country_id')
@@ -33,10 +31,10 @@ export const users = pgTable('users', {
   organization_id: uuid('organization_id')
     .references(() => organizations.id, { onDelete: 'set null' }),
 
-  role: UserRoles('role').default('USER'),
   status: UserStatus('status').default('PENDING'),
 
   activation_token: text('activation_token'),
+  is_profile_completed: boolean('is_profile_completed').default(false),
   created_at: timestamp('created_at').defaultNow(),
   updated_at: timestamp('updated_at').defaultNow(),
 });

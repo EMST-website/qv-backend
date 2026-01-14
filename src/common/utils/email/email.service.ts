@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 
@@ -71,5 +71,36 @@ export class EmailService {
       } catch (error) {
          throw new Error(`Failed to send email: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
-   }
+   };
+
+   /**
+    * Send an email to the user when they are created with the activation link
+    * @param email - The email of the user
+    * @param password - The password of the user
+    * @returns The info of the email
+    */
+   async sendUserCreatedEmail(email: string, activation_token: string) {
+      try {
+         const info = await this.transporter.sendMail({
+            from: this.configService.get<string>('GMAIL_USER'),
+            to: email,
+            subject: 'User Created',
+            html: `
+            <h1>User Created</h1>
+            <p>Welcome to QV!</p>
+            <p>Please click the link below to activate your account.</p>
+            <a href="${this.configService.get<string>('APP_URL')}/activate?token=${activation_token}">Activate Account</a>
+            <p>Thank you for using QV!</p>
+            <p>The QV Team.</p>
+            <p>This is an automated email, please do not reply to this email.</p>
+            <p>If you did not request this email, please ignore this email.</p>
+            `,
+         });
+
+         return (info);
+      } catch (error: unknown) {
+         console.error(error instanceof Error ? error.message : 'Unknown error');
+         throw (new InternalServerErrorException('Failed to send email'));
+      }
+   };
 };

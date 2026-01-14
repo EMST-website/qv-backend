@@ -7,5 +7,6 @@ import { JwtModule } from '@/common/utils/jwt/jwt.module';
   imports: [JwtModule],
   providers: [OrganizationsService],
   controllers: [OrganizationsController],
+  exports: [OrganizationsService],
 })
 export class OrganizationsModule {}
