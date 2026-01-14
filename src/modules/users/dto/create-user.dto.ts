@@ -31,6 +31,12 @@ export class CreateUserDto {
   @IsNotEmpty()
   phone: string;
 
+  @ApiProperty({ 
+    example: 'MALE', 
+    enum: ['MALE', 'FEMALE'],
+    description: 'User gender',
+    required: false
+  })
   @IsEnum(['MALE', 'FEMALE'], {message: 'Gender must be either MALE or FEMALE'})
   @IsOptional()
   gender?: UserGenderEnum;
@@ -40,14 +46,30 @@ export class CreateUserDto {
   @IsOptional()
   date_of_birth?: string;
 
+  @ApiProperty({ 
+    example: '123e4567-e89b-12d3-a456-426614174000',
+    description: 'Country UUID',
+    format: 'uuid'
+  })
   @IsUUID()
   @IsNotEmpty()
   country_id: string;
 
+  @ApiProperty({ 
+    example: '223e4567-e89b-12d3-a456-426614174000',
+    description: 'City UUID (optional)',
+    format: 'uuid',
+    required: false
+  })
   @IsUUID()
   @IsOptional()
   city_id?: string;
 
+  @ApiProperty({ 
+    example: '323e4567-e89b-12d3-a456-426614174000',
+    description: 'Organization UUID',
+    format: 'uuid'
+  })
   @IsUUID()
   @IsNotEmpty()
   organization_id: string;
