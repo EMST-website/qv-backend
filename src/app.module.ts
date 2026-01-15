@@ -9,6 +9,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AdminsModule } from './modules/admins/admins.module';
 import { CacheModule } from './cache/cache.module';
 import { CountriesModule } from './modules/countries/countries.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { CountriesModule } from './modules/countries/countries.module';
     NotificationsModule,
     AuthModule,
     AdminsModule,
-    CountriesModule
+    CountriesModule,
+    CategoriesModule
   ],
   controllers: [],
   providers: [],
