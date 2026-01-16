@@ -56,9 +56,15 @@ export class AdminsService {
       const old_session = await this.db.query.adminSessions.findFirst({
          where: eq(adminSessions.admin_id, admin.id),
       });
-      // check if session exists and not expired
-      if (old_session && old_session.expires_at > new Date())
-         throw (new UnauthorizedException('Session already exists and not expired'));
+      
+      // If session exists and not expired, return the existing session
+      if (old_session && old_session.expires_at > new Date()) {
+         return (successResponse('OTP already sent to email', { 
+            session_id: old_session.id, 
+            email: admin.email,
+            expires_at: old_session.expires_at
+         }));
+      }
 
       // if admin exists and password is valid, create an session otp for 2FA
       // generate a 6 numberic otp, and hash it, expires in 5 minutes
@@ -67,8 +73,8 @@ export class AdminsService {
       console.log('hashed_otp', hashed_otp);
       const expires_at = new Date(Date.now() + this.OTP_EXPIRE_TIME);
       const result = await this.db.transaction(async (tx) => {
-         // if session exists and not expired, remove the old session
-         if (old_session && old_session.expires_at < new Date())
+         // if session exists and expired, remove the old session
+         if (old_session)
             await tx.delete(adminSessions).where(eq(adminSessions.id, old_session.id));
 
          // create a session for the admin
@@ -191,6 +197,35 @@ export class AdminsService {
             expires_at: result.refresh_token.expires_at
          }
       }));
+   };
+
+   /**
+    * Check if the admin is authenticated and return admin data
+    * Used by mobile apps to validate existing sessions on app startup
+    * @param admin_id - The admin ID from the JWT token
+    * @returns Admin data if authenticated
+    */
+   async checkAuth(admin_id: string) {
+      const admin = await this.db.query.admins.findFirst({
+         where: eq(admins.id, admin_id),
+         columns: {
+            id: true,
+            email: true,
+            first_name: true,
+            last_name: true,
+            role: true,
+            phone: true,
+            country: true,
+            city: true,
+            created_at: true,
+            updated_at: true,
+         }
+      });
+
+      if (!admin)
+         throw (new NotFoundException('Admin not found'));
+
+      return (successResponse('Admin authenticated', { admin }));
    };
 
    async logout(refresh_token_id: string, refresh_token: string) {
