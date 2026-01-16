@@ -90,6 +90,42 @@ export class AdminsController {
       return (res.json(response));
    };
 
+   @Get('me')
+   @UseGuards(AdminAuthGuard)
+   @ApiBearerAuth()
+   @ApiOperation({ 
+      summary: 'Get current admin profile',
+      description: 'Get the authenticated admin\'s profile. Use this endpoint on app startup to check if the user is still logged in. If successful, user stays logged in. If 401, redirect to login.'
+   })
+   @ApiResponse({ 
+      status: 200, 
+      description: 'Admin profile retrieved successfully',
+      schema: {
+         example: {
+            success: true,
+            message: 'Admin authenticated',
+            data: {
+               admin: {
+                  id: '123e4567-e89b-12d3-a456-426614174000',
+                  email: 'admin@example.com',
+                  first_name: 'John',
+                  last_name: 'Doe',
+                  phone: '+971501234567',
+                  country: 'UAE',
+                  city: 'Dubai',
+                  role: 'ADMIN',
+                  created_at: '2024-01-01T00:00:00.000Z',
+                  updated_at: '2024-01-01T00:00:00.000Z'
+               }
+            }
+         }
+      }
+   })
+   @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or expired token' })
+   async GetMe(@Req() req: Request & { payload: AdminPayload }) {
+      return (await this.adminsService.checkAuth(req.payload.id));
+   };
+
    @Get('logout')
    @ApiOperation({ 
       summary: 'Logout admin',
