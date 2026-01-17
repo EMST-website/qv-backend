@@ -4,7 +4,6 @@ import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './modules/users/users.module';
 import { WebinarsModule } from './modules/webinars/webinars.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
-import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AdminsModule } from './modules/admins/admins.module';
 import { CacheModule } from './cache/cache.module';
@@ -24,7 +23,6 @@ import { CategoriesModule } from './modules/categories/categories.module';
     UsersModule,
     WebinarsModule,
     OrganizationsModule,
-    NotificationsModule,
     AuthModule,
     AdminsModule,
     CountriesModule,
