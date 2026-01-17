@@ -9,4 +9,5 @@ export * from '@/modules/users/schema/users.schema';
 export * from '@/modules/organizations/organizations.schema';
 
 export * from '@/modules/categories/categories.schema';
+export * from '@/modules/products/products.schema';
 // in production we will use the following: CREATE EXTENSION IF NOT EXISTS "pgcrypto" in the DATABASE to generate random UUIDs

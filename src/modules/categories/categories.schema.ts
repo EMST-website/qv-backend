@@ -1,5 +1,7 @@
+import { relations } from "drizzle-orm";
 import { text } from "drizzle-orm/pg-core";
 import { pgTable, uuid, varchar, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { productsToCategories } from "../products/products.schema";
 
 
 export const CategoryStatus = pgEnum('category_status', ['ACTIVE', 'INACTIVE']);
@@ -16,3 +18,6 @@ export const categories = pgTable('categories', {
    updated_at: timestamp('updated_at').defaultNow(),
 });
 
+export const categoriesRelations = relations(categories, ({ many }) => ({
+   productsToCategories: many(productsToCategories),
+}));
