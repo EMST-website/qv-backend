@@ -186,70 +186,11 @@ npm run db:push
 # Development with hot reload
 npm run start:dev
 
-# Debug mode
-npm run start:debug
-
-# Lint
-npm run lint
+# Production mode
+npm run start:prod
 ```
 
-API: [http://localhost:3000](http://localhost:3000)  
-Docs: [http://localhost:3000/api](http://localhost:3000/api)
+## Documentation
 
-## Testing
-
-```bash
-# Unit tests
-npm test
-
-# Watch mode
-npm run test:watch
-
-# Coverage
-npm run test:cov
-
-# E2E tests
-npm run test:e2e
-```
-
-## Troubleshooting
-
-### Database Connection Failed
-```bash
-# Check PostgreSQL is running
-sudo systemctl status postgresql
-sudo systemctl start postgresql
-```
-
-### Port Already in Use
-```bash
-# Find & kill process on port 3000
-lsof -i :3000
-kill -9 <PID>
-```
-
-### Module Not Found
-```bash
-# Reinstall dependencies
-rm -rf node_modules package-lock.json
-npm install
-```
-
-### Redis Connection Error
-```bash
-# Start Redis or disable in code
-redis-cli ping
-sudo systemctl start redis
-```
-
-### Migration Issues
-```bash
-# Reset database (CAUTION: deletes data)
-npm run db:push
-```
-
-## Resources
-
-- [NestJS Docs](https://docs.nestjs.com/)
-- [Drizzle ORM Docs](https://orm.drizzle.team/)
-- [PostgreSQL Docs](https://www.postgresql.org/docs/)
+Once the server is running, visit:
+[http://localhost:3000/api](http://localhost:3000/api) for Swagger API documentation.

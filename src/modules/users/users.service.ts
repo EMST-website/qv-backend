@@ -251,4 +251,4 @@ export class UsersService {
     // return the deleted user
     return (successResponse('User deleted successfully', { ...user }));
   }
-}
+};

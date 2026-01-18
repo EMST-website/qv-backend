@@ -11,15 +11,15 @@ export class AuthController {
   @ApiOperation({ summary: 'Activate user account' })
   @ApiResponse({ status: 200, description: 'User activated successfully' })
   @ApiResponse({ status: 400, description: 'Invalid activation token or data' })
-  activate() {
-    return this.authService.activateUser();
+  activate(@Body() body: any) {
+    return this.authService.activateUser(body);
   }
 
   @Post('login')
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  login() {
-      return this.authService.validateUser();
+  login(@Body() body: any) {
+      return this.authService.validateUser(body);
   }
 }
