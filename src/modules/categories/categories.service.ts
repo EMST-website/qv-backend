@@ -6,7 +6,7 @@ import { CreateCategoryDto } from "./dto/create-category.dto";
 import { MediaService } from "@/common/utils/media/media.service";
 import { categories } from "@/database/schema";
 import { successResponse } from "@/common/utils/response/response";
-import { and, asc, count, eq, like } from "drizzle-orm";
+import { and, asc, count, eq, ilike } from "drizzle-orm";
 import { UpdateCategoryDto } from "./dto/update-category.dto";
 import { REDIS_CLIENT } from "@/cache/cache.service";
 import { Redis } from "ioredis";
@@ -49,14 +49,14 @@ export class CategoriesService {
       const [categories_list, total] = await Promise.all([
          this.db.query.categories.findMany({
             where: and(
-               ...(search ? [like(categories.title, `%${search}%`)] : []),
+               ...(search ? [ilike(categories.title, `%${search.toLowerCase().trim()}%`)] : []),
             ),
             offset: (page - 1) * limit,
             limit,
             orderBy: [asc(categories.title)],
          }),
          this.db.select({ count: count() }).from(categories).where(and(
-            ...(search ? [like(categories.title, `%${search}%`)] : []),
+            ...(search ? [ilike(categories.title, `%${search.toLowerCase().trim()}%`)] : []),
          )).then(result => result[0].count),
       ]);
 
