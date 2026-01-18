@@ -1,5 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Inject } from '@nestjs/common';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 import { JwtService } from '../utils/jwt/jwt.service';
 import { adminRefreshTokens, AdminRoles, AdminRolesEnum, admins } from '@/database/schema';
 import { DATABASE_CONNECTION } from '@/database/database.provider';
@@ -47,6 +47,7 @@ export class AdminAuthGuard implements CanActivate {
       context: ExecutionContext,
    ) {
       const req: Request = context.switchToHttp().getRequest();
+      const res: Response = context.switchToHttp().getResponse();
 
       // check if the request has a valid access token
       const access_token = req.cookies['access_token']?.split(' ')[1];
@@ -69,6 +70,12 @@ export class AdminAuthGuard implements CanActivate {
                throw (new UnauthorizedException('Access denied'));
 
             // generate a new access token
+            const payload = {
+               id: admin.id,
+               role: admin.role as AdminRolesEnum,
+               first_name: admin.first_name,
+               last_name: admin.last_name,
+            };
             const new_access_token = this.jwtService.generate_admin_access_token({
                id: admin.id,
                role: admin.role as AdminRolesEnum,
@@ -76,14 +83,14 @@ export class AdminAuthGuard implements CanActivate {
                last_name: admin.last_name,
             });
             // set the new access token in the request cookies
-            req.cookies['access_token'] = `Bearer ${new_access_token}`;
-            (req as any).payload = {
-               id: admin.id,
-               role: admin.role as AdminRolesEnum,
-               first_name: admin.first_name,
-               last_name: admin.last_name,
-            };
+            res.cookie('access_token', new_access_token, {
+               httpOnly: true,
+               secure: process.env.NODE_ENV === 'production',
+               maxAge: 1000 * 60 * 60, // 1 hour
+               sameSite: 'strict',
+            });
             // return true
+            (req as any).payload = payload;
             return (true);
          };
          // set the payload in the request
@@ -100,7 +107,7 @@ export class AdminAuthGuard implements CanActivate {
 // super admin guard
 @Injectable()
 export class SuperAdminAuthGuard implements CanActivate {
-   constructor() {};
+   constructor() { };
 
    // check if the user is a super admin
    canActivate(
@@ -125,7 +132,7 @@ export class SuperAdminAuthGuard implements CanActivate {
 // admin guard
 @Injectable()
 export class AdminOrSuperAdminAuthGuard implements CanActivate {
-   constructor() {};
+   constructor() { };
 
    // check if the user is an admin or super admin
    canActivate(

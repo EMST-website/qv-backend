@@ -5,6 +5,7 @@ import { relations } from 'drizzle-orm';
 import { integer } from 'drizzle-orm/pg-core';
 import { varchar } from 'drizzle-orm/pg-core';
 import { pgEnum, pgTable, uuid, text, timestamp, boolean } from 'drizzle-orm/pg-core';
+import { stories } from '@/modules/stories/stories.schema';
 
 export const UserGender = pgEnum('user_gender', ['MALE', 'FEMALE']);
 export const UserStatus = pgEnum('user_status', ['ACTIVE', 'INACTIVE', 'PENDING']);
@@ -18,6 +19,7 @@ export const users = pgTable('users', {
   password: text('password').notNull(),
   first_name: varchar('first_name', { length: 255 }),
   last_name: varchar('last_name', { length: 255 }),
+  title: varchar('title', { length: 255 }),
   phone: varchar('phone', { length: 255 }),
   image_url: text('image_url'),
   gender: UserGender('gender'),
@@ -40,7 +42,7 @@ export const users = pgTable('users', {
 });
 
 // relations
-export const usersRelations = relations(users, ({ one }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
   country: one(countries, {
     fields: [users.country_id],
     references: [countries.id],
@@ -53,4 +55,5 @@ export const usersRelations = relations(users, ({ one }) => ({
     fields: [users.organization_id],
     references: [organizations.id],
   }),
+  stories: many(stories),
 }));

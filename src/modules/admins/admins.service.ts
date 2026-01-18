@@ -64,7 +64,7 @@ export class AdminsService {
       // generate a 6 numberic otp, and hash it, expires in 5 minutes
       const otp = Math.floor(100000 + Math.random() * 900000);
       const hashed_otp = await bcrypt.hash(otp.toString(), 10);
-      console.log('hashed_otp', hashed_otp);
+
       const expires_at = new Date(Date.now() + this.OTP_EXPIRE_TIME);
       const result = await this.db.transaction(async (tx) => {
          // if session exists and not expired, remove the old session

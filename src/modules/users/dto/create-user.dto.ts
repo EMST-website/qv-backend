@@ -26,6 +26,15 @@ export class CreateUserDto {
   @IsNotEmpty()
   last_name: string;
 
+  @ApiProperty({ 
+    example: 'Software Engineer',
+    description: 'User job title or position',
+    required: false
+  })
+  @IsString()
+  @IsOptional()
+  title?: string;
+
   @ApiProperty({ example: '+1234567890' })
   @IsString()
   @IsNotEmpty()

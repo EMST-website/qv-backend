@@ -179,6 +179,7 @@ export class UsersService {
       password: encrypted_password,
       first_name: form.first_name,
       last_name: form.last_name,
+      title: form.title,
       phone: form.phone,
       country_id: country.id,
       city_id: city ? city.id : null,
@@ -222,6 +223,7 @@ export class UsersService {
     const updated_user = await this.db.update(users).set({
       first_name: form.first_name ? form.first_name : undefined,
       last_name: form.last_name ? form.last_name : undefined,
+      title: form.title ? form.title : undefined,
       email: form.email ? form.email : undefined,
       phone: form.phone ? form.phone : undefined,
       country_id: form.country_id ? form.country_id : undefined,

@@ -22,6 +22,15 @@ export class UpdateUserDto {
    last_name?: string;
 
    @ApiProperty({ 
+     example: 'Software Engineer',
+     description: 'User job title or position',
+     required: false
+   })
+   @IsString()
+   @IsOptional()
+   title?: string;
+
+   @ApiProperty({ 
      example: 'john.doe@example.com',
      description: 'User email address',
      required: false

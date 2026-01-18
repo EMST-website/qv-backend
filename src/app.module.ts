@@ -11,6 +11,7 @@ import { CountriesModule } from './modules/countries/countries.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ProductsModule } from './modules/products/products.module';
 import { ArticlesModule } from './modules/articles/articles.module';
+import { StoriesModule } from './modules/stories/stories.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { ArticlesModule } from './modules/articles/articles.module';
     CountriesModule,
     CategoriesModule,
     ProductsModule,
-    ArticlesModule
+    ArticlesModule,
+    StoriesModule
   ],
   controllers: [],
   providers: [],
