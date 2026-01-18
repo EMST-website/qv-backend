@@ -10,7 +10,7 @@ import { Request } from "express";
  * @param folderPath - The path to the folder where the images will be uploaded
  * @returns Multer configuration
  */
-export function multerConfigUploadImage(folderPath: string) {
+export function multerConfigUploadImage(folderPath: string, allow_video: boolean = false) {
    return ({
       storage: diskStorage({
          destination: resolve(folderPath),
@@ -19,7 +19,7 @@ export function multerConfigUploadImage(folderPath: string) {
          },  
       }),
       fileFilter: (req: Request, file: Express.Multer.File, callback: (error: Error | null, acceptFile: boolean) => void) => {
-         if (file.mimetype.startsWith('image/')) {
+         if (file.mimetype.startsWith('image/') || (allow_video && file.mimetype.startsWith('video/'))) {
             callback(null, true);
          } else {
             callback(new BadRequestException('Invalid file type'), false);

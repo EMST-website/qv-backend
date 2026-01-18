@@ -10,6 +10,7 @@ import { CacheModule } from './cache/cache.module';
 import { CountriesModule } from './modules/countries/countries.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ProductsModule } from './modules/products/products.module';
+import { ArticlesModule } from './modules/articles/articles.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { ProductsModule } from './modules/products/products.module';
     AdminsModule,
     CountriesModule,
     CategoriesModule,
-    ProductsModule
+    ProductsModule,
+    ArticlesModule
   ],
   controllers: [],
   providers: [],
