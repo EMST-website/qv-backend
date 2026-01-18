@@ -9,7 +9,7 @@ export type ProductStatusEnum = (typeof ProductStatus.enumValues)[number];
 // Products table
 export const products = pgTable('products', {
    id: uuid('id').defaultRandom().primaryKey(),
-   name: varchar('name', { length: 255 }).notNull(),
+   title: varchar('title', { length: 255 }).notNull(),
    description: text('description'),
    status: ProductStatus('status').default('ACTIVE'),
    image_url: text('image_url'),
