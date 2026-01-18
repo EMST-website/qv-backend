@@ -3,7 +3,7 @@ import { DATABASE_CONNECTION } from '@/database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { successResponse } from '@/common/utils/response/response';
 import { CreateUserDto } from './dto/create-user.dto';
-import { or, eq, and, like, asc, count } from 'drizzle-orm';
+import { or, eq, and, asc, count, ilike } from 'drizzle-orm';
 import { users } from './schema/users.schema';
 import * as schema from '@/database/schema';
 import { CountriesService } from '../countries/countries.service';
@@ -36,7 +36,7 @@ export class UsersService {
     const [users_list, total] = await Promise.all([
       this.db.query.users.findMany({
         where: and(
-          ...(search ? [like(users.first_name, `%${search}%`), like(users.last_name, `%${search}%`)] : []),
+          ...(search ? [ilike(users.first_name, `%${search.toLowerCase().trim()}%`), ilike(users.last_name, `%${search.toLowerCase().trim()}%`)] : []),
           ...(organization_id ? [eq(users.organization_id, organization_id)] : []),
           ...(country_id ? [eq(users.country_id, country_id)] : []),
           ...(city_id ? [eq(users.city_id, city_id)] : []),
@@ -79,7 +79,7 @@ export class UsersService {
         }
       }),
       this.db.select({ count: count() }).from(users).where(and(
-        ...(search ? [like(users.first_name, `%${search}%`), like(users.last_name, `%${search}%`)] : []),
+        ...(search ? [ilike(users.first_name, `%${search.toLowerCase().trim()}%`), ilike(users.last_name, `%${search.toLowerCase().trim()}%`)] : []),
         ...(organization_id ? [eq(users.organization_id, organization_id)] : []),
         ...(country_id ? [eq(users.country_id, country_id)] : []),
         ...(city_id ? [eq(users.city_id, city_id)] : []),

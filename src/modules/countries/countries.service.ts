@@ -6,7 +6,7 @@ import * as schema from '@/database/schema';
 import { REDIS_CLIENT } from '@/cache/cache.service';
 import { Redis } from 'ioredis';
 import { CreateCountryDto } from './dto/create-country.dto';
-import { and, asc, count, eq, like } from 'drizzle-orm';
+import { and, asc, count, eq, ilike } from 'drizzle-orm';
 import { countries, CountryStatusEnum } from './schema/countries.schema';
 import { cities as citiesSchema } from './schema/cities.schema';
 import { CityStatusEnum } from './schema/cities.schema';
@@ -158,7 +158,7 @@ export class CountriesService {
       const [countries_db, total] = await Promise.all([
          this.db.query.countries.findMany({
             where: and(
-               ...(search ? [like(countries.name, `%${search}%`)] : []),
+               ...(search ? [ilike(countries.name, `%${search.toLowerCase().trim()}%`)] : []),
                ...(status ? [eq(countries.status, status)] : []),
             ),
             offset: (page - 1) * limit,
@@ -175,7 +175,7 @@ export class CountriesService {
          this.db.select({
             count: count()
          }).from(countries).where(and(
-            ...(search ? [like(countries.name, `%${search}%`)] : []),
+            ...(search ? [ilike(countries.name, `%${search.toLowerCase().trim()}%`)] : []),
             ...(status ? [eq(countries.status, status)] : []),
          )).then(result => result[0].count)
       ]);

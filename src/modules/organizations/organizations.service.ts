@@ -6,7 +6,7 @@ import { REDIS_CLIENT } from '@/cache/cache.service';
 import { Redis } from 'ioredis';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { cities, countries, organizations, users } from '@/database/schema';
-import { and, asc, count, desc, eq } from 'drizzle-orm';
+import { and, asc, count, desc, eq, ilike } from 'drizzle-orm';
 import { successResponse } from '@/common/utils/response/response';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 
@@ -79,7 +79,7 @@ export class OrganizationsService {
     const [organizations_db, total] = await Promise.all([
       this.db.query.organizations.findMany({
         where: and(
-          ...(name ? [eq(organizations.name, name)] : []),
+          ...(name ? [ilike(organizations.name, `%${name.toLowerCase().trim()}%`)] : []),
           ...(country_id ? [eq(organizations.country_id, country_id)] : []),
         ),
         limit: limit,
@@ -88,7 +88,7 @@ export class OrganizationsService {
       }),
       this.db.select({ count: count() }).from(organizations).where(
         and(
-          ...(name ? [eq(organizations.name, name)] : []),
+          ...(name ? [ilike(organizations.name, `%${name.toLowerCase().trim()}%`)] : []),
           ...(country_id ? [eq(organizations.country_id, country_id)] : []),
         )
       ).then(result => result[0].count)

@@ -3,7 +3,7 @@ import { LoginAdminsDto, VerifyOTPDto } from './dto/login-admins.dto';
 import { DATABASE_CONNECTION } from '@/database/database.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '@/database/schema';
-import { and, count, desc, eq, like, or } from 'drizzle-orm';
+import { and, count, desc, eq, ilike, or } from 'drizzle-orm';
 import { AdminRolesEnum, admins } from './schema/admins.schema';
 import { adminSessions } from './schema/sessions.schema';
 import * as bcrypt from 'bcrypt';
@@ -277,7 +277,7 @@ export class AdminsService {
       const offset = (page - 1) * limit;
       const where_clause = [];
       if (search)
-         where_clause.push(like(admins.first_name, `%${search}%`));
+         where_clause.push(ilike(admins.first_name, `%${search.toLowerCase().trim()}%`));
 
       if (role)
          where_clause.push(eq(admins.role, role));
